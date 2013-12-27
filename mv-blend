@@ -1,0 +1,44 @@
+#!/bin/bash
+#+
+# Renames a .blend file along with any corresponding .blend1, .blend2 etc.
+#
+# Usage:
+#
+#     mv-blend oldname.blend newname.blend
+#
+# renames oldname.blend to newname.blend. The .blend suffixes are mandatory,
+# and newname.blend must not already exist. If oldname.blend1 exists, it will
+# also be renamed to newname.blend1, and similarly oldname.blend2 to
+# newname.blend2 etc.
+#
+# Written 2013 December 28 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+#-
+set -e
+shopt -s nullglob
+
+die()
+  {
+    echo "$1" 1>&2
+    exit 3
+  } # die
+
+if [ $# != 2 ]; then
+    die $'Usage:\n\t'"$0 oldname newname"$'\n'
+fi
+oldname="$1"
+newname="$2"
+if [ "${oldname%.blend}.blend" != "${oldname}" -o "${newname%.blend}.blend" != "${newname}" ]; then
+    die "names must end with .blend"
+fi
+if [ ! -f "${oldname}" ]; then
+    die "$oldname does not exist"
+fi
+if [ -e "${newname}" ]; then
+    die "$newname already exists"
+fi
+oldname="${oldname%.blend}"
+newname="${newname%.blend}"
+for f in "${oldname}.blend" "${oldname}".blend?*; do
+    suffix="${f##*.blend}"
+    mv -v "$f" "${newname}.blend${suffix}"
+done
