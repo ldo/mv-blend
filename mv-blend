@@ -6,12 +6,17 @@
 #
 #     mv-blend oldname.blend newname.blend
 #
-# renames oldname.blend to newname.blend. The .blend suffixes are mandatory,
-# and newname.blend must not already exist. If oldname.blend1 exists, it will
-# also be renamed to newname.blend1, and similarly oldname.blend2 to
-# newname.blend2 etc.
+# or
 #
-# Copyright 2013 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+#     mv-blend oldname.blend destdir
+#
+# renames oldname.blend to newname.blend, or keeps its name but moves it into destdir.
+# The .blend suffixes are mandatory (on both names in the first form, and on the source name
+# in the second form), and a file with the new pathname must not already exist. If
+# oldname.blend1 exists, it will also be renamed to newname.blend1, and similarly
+# oldname.blend2 to newname.blend2 etc.
+#
+# Copyright 2013, 2015 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
 # Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
 #-
 set -e
@@ -28,11 +33,18 @@ if [ $# != 2 ]; then
 fi
 oldname="$1"
 newname="$2"
-if [ "${oldname%.blend}.blend" != "${oldname}" -o "${newname%.blend}.blend" != "${newname}" ]; then
+if [ "${oldname%.blend}.blend" != "${oldname}" ]; then
     die "names must end with .blend"
 fi
 if [ ! -f "${oldname}" ]; then
     die "$oldname does not exist"
+fi
+if [ -d "${newname}" ]; then
+    newname="${newname}/${oldname##*/}"
+else
+    if [ "${newname%.blend}.blend" != "${newname}" ]; then
+        die "names must end with .blend"
+    fi
 fi
 if [ -e "${newname}" ]; then
     die "$newname already exists"
