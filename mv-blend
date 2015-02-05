@@ -11,7 +11,8 @@
 # also be renamed to newname.blend1, and similarly oldname.blend2 to
 # newname.blend2 etc.
 #
-# Written 2013 December 28 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+# Copyright 2013 by Lawrence D'Oliveiro <ldo@geek-central.gen.nz>.
+# Licensed under CC-BY <http://creativecommons.org/licenses/by/4.0/>.
 #-
 set -e
 shopt -s nullglob
